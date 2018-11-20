@@ -1,0 +1,11 @@
+site_name: My Docs
+theme: yeti
+repo_url: https://github.com/jpgelas/edu-mkdocs
+site_author: Jean-Patrick Gelas
+
+nav:
+        - Home: 'index.md'
+        - CCI:
+                - UE Admin (SIRR): 'UE_AdminSysResx_CCI.md'
+                - UE Cloud: 'UE_Cloud_CCI.md'
+
