@@ -403,17 +403,17 @@ dpkg -l | grep ...
 1. Proposez un mot de passe solide : 
 2. Quelle commande vous permet de « vous faire passer » pour un autre utilisateur : 
 3. Vous êtes connecté en tant que l'utilisateur moi et vous voulez vous faire
-   passer pour l'utilisateur bilbo. Devez- vous saisir un mot de passe ? OUI /
-NON
+   passer pour l'utilisateur bilbo. Devez- vous saisir un mot de passe ? **OUI
+/ NON**
 1. Vous êtes connecté en tant que « root » et vous voulez vous faire passer pour l'utilisateur « luke ». Devez-vous
-saisir un mot de passe ? OUI / NON
+saisir un mot de passe ? **OUI / NON**
 1. Leia s'approche d'un poste resté allumé avec un terminal ouvert. Elle s'exclame « Wahoo! Une session root est
 restée ouverte ! ». Comment peut elle supposer cela ? 
 6. Quelle CLI utilisez-vous pour associer une adresse IP à un interface réseaux Ethernet : 
 7. A quoi sert la commande ping ? 
 8. A quoi sert le logiciel Wireshark ? 
 9. A quoi servent les apt tools ? 
-10. Sur un système à la Unix récent le fichier /etc/password contient le hash des mots de passes. OUI/NON
+10. Sur un système à la Unix récent le fichier `/etc/password` contient le hash des mots de passes. **OUI/NON**
 
 
 ### Questions B
@@ -424,11 +424,11 @@ Si je relance MD5 dessus je vais obtenir une empreinte différente :
 □ un peu □ beaucoup □ à la folie □ passionnément □ pas du tout
 2. Afin de réduire les risques on doit pouvoir garantir :
 C O N F I .......... ; I N T É ..... ; A U T H ............
-3. Le chiffrage symétrique est basé sur deux clés symétriques : □ OUI / □ NON
+3. Le chiffrage symétrique est basé sur deux clés symétriques : **□ OUI / □ NON**
 4. Pour signer un document il est nécessaire de signer le « condensat » (ou l'empreinte) du document avec sa clé
 □ publique □ privé □ les deux
 5. Quel est le problème du chiffrement symétrique ? 
-6. Quelle clé dois-je copier dans le fichier ~/.ssh/authorized_keys de la machine distante ?
+6. Quelle clé dois-je copier dans le fichier `~/.ssh/authorized_keys` de la machine distante ?
 □ Ma clé Privée □ ma clé Publique □ les deux
 7. A quoi cela sert-il ? 
 8. A quoi sert une passphrase ? : 
@@ -438,6 +438,16 @@ C O N F I .......... ; I N T É ..... ; A U T H ............
 
 ### Questions C
 
+
+Description|Répertoire
+--------------------------------------------|----------    
+Les fichiers des utilisateurs		    | /tmp 
+Le fichier de log de Apache (serveur web)   | /boot
+Le noyau Linux				    | /var/log
+Un fichier temporaire (toto.tmp)   	    | /home
+
+  2. Dans le tableau ci-dessus, reliez la description des fichiers vers le
+     répertoire qui correspond le mieux.
   1. Ordonnez les lignes de commandes suivantes :
     1. dmesg
     1. umount ./pointdemontage
@@ -446,19 +456,12 @@ C O N F I .......... ; I N T É ..... ; A U T H ............
     1. fdisk /dev/sdb # je partitionne
     1. mkfs.ext2 /dev/sdb1 # je formate
     1. touch ./pointdemontage/itworks.tst
-  2. Reliez la description des fichiers ci-dessous vers le répertoire qui correspond le mieux :
-    - Les fichiers des utilisateurs
-    - Le fichier de log de Apache (serveur web)o
-    - Le noyau Linux
-    - Un fichier temporaire (toto.tmp)
-    - ..................................
-    - /tmp
-    - /boot
-    - /var/log
-    - /home
-  3. Le protocole NFS ne chiffre pas les données qui passe sur le réseau : VRAI / FAUX
-  4. On peut arrêter un serveur NFS n'importe quand, cela n'impact pas les postes clients : VRAI / FAUX
-  5. Voici une liste d'opérations susceptibles d'être réalisées lors d'un audit de sécurité (ex : pentesting) du système informatique d'une entreprise. Ordonnez les :
+  3. Le protocole NFS ne chiffre pas les données qui passe sur le réseau : **VRAI / FAUX**
+  4. On peut arrêter un serveur NFS n'importe quand, cela n'impact pas les
+     postes clients : **VRAI / FAUX**
+  5. Voici une liste d'opérations susceptibles d'être réalisées lors d'un audit
+     de sécurité (ex : pentesting) du système informatique d'une entreprise.
+Ordonnez les :
     1. Signature d'un document vous autorisant à pénétrer le système informatique de l'entreprise audité.
     1. Installation d'une backdoor
     1. Nettoyage des traces (ex : suppression des fichiers de logs)
