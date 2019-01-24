@@ -119,7 +119,7 @@ qemu-system-x86_64  -kernel ./bzImage-3.16-jpgelas \
 
  
 
-## TP3 - Clé USB (Green PDF Viewer / Frambuffer)
+## TP3 - Clé USB (Green PDF Viewer / Framebuffer)
 
 **Ingrédients**
 
@@ -211,7 +211,7 @@ Lien utile
 
 **Objectif 2**
 
-  - Activez le mode *frambuffer* cela évitera d'avoir à installer un serveur X trop lourd pour ce type de projet.
+  - Activez le mode *framebuffer* cela évitera d'avoir à installer un serveur X trop lourd pour ce type de projet.
   - Téléchargez, compilez et installer le binaire *green* sur votre clé [Green PDF viewer](https://github.com/schandinat/green)
   - Faites en sorte que lorsque la machine boot sur votre clé USB, un document
     PDF de votre choix s'affiche à l'écran (sans avoir à toucher au clavier !)
