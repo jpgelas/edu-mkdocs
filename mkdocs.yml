@@ -8,4 +8,5 @@ nav:
         - CCI:
                 - UE Admin (SIRR): 'UE_AdminSysResx_CCI.md'
                 - UE Cloud: 'UE_Cloud_CCI.md'
-
+        - Système:
+                - UE Embarque : 'UE_Embarque.md'

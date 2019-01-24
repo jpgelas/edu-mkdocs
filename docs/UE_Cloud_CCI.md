@@ -26,7 +26,7 @@ navigateur en saisissant dans la barre de navigation l’URL suivante :
 Pour vous connecter à votre instance de machine virtuelle vous aurez besoin
 d’un jeu de clé SSH (clés publique/privé). Deux solutions s’offre à vous : 
 
-  1. Générer un jeu de clé via l’outil `sshkey-gen` que vous importerez
+  1. Générer un jeu de clé via l’outil `ssh-keygen` que vous importerez
     (selectionnez l’onglet « Access and security -> Key Pair -> Import Key
 Pair » puis copier/coller la clé publique (.ssh/id_rsa.pub))  ou, 
   1. Générer une clef lors de la création de votre première VM. Pour cela
@@ -61,7 +61,7 @@ associée (cf. interface Horizon) et connectez-vous via SSH en spécifiant le no
 de votre clé publique à l’aide de l’option *-i* de SSH le cas échéant.
 
 Exemple : 
-`$ ssh –i ./chemin/vers/maCleSsh ubuntu@adresseIPdeVotreVM`
+`$ ssh -i ./chemin/vers/maCleSsh ubuntu@adresseIPdeVotreVM`
 
 *Remarque 1 :* Le nom de votre clé SSH est peut être *id_rsa* ou *id_dsa*, ou
 *nomcle.pem*.
@@ -161,9 +161,9 @@ Désarchiver le zip dans `/var/www/html`
 
 Construisez et alimentez la BdD avec les scripts fourni.
 ```sh
-mysql -h localhost -u root -p < _install/01-create…
-mysql -h localhost -u root –p < _install/02-create…
-mysql -h localhost -u root –p < _install/03-insert…
+mysql -h localhost -u root -p < _installation/01-create...
+mysql -h localhost -u root –p < _installation/02-create...
+mysql -h localhost -u root –p < _installation/03-insert...
 
 http://localhost/tiny-master
 ```
