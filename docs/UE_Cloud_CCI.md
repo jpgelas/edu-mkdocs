@@ -192,8 +192,79 @@ FLUSH PRIVILEGES;
 
 *Sources de la solution :* [askubuntu.com](https://askubuntu.com/questions/763336/cannot-enter-phpmyadmin-as-root-mysql-5-7/763359#763359)
 
+---
 
+## TP #2 Introduction aux architectures Web Orientées Services 
 
+> **Objectifs :** L’objectif de ce TP est de proposer une introduction aux
+> architectures orientés Services (Service Oriented Architecture (SOA)), très
+> populaire pour les services web et cloud, et à l’architecture Model Vue
+> Contrôleur (MVC), très populaire dans l’industrie. Pour cela nous vous
+> proposons de développer deux services web, l’un donnant l’heure et la date du
+> jour, et l’autre, récupérant cette date et cette heure pour en générer une page
+> web.  Ces services web seront développés en Python un langage de programmation
+> orienté objet. Ce TP servira donc d’introduction à Python un langage
+> particulièrement populaire. Il est conçu prioritairement pour la lisibilité du
+> code. 
 
+Le sujet est disponible à l'[adresse suivante](https://perso.univ-lyon1.fr/jean-patrick.gelas/doc/cci/TPsoa2019.pdf).
 
+---
+
+## TP #3 Projet "Libre"
+
+> **Objectif :** Concevoir et développer (en binôme) une application qui
+> servira  une page web sur laquelle seront mis en forme des données provenant
+> d'un service accessible via une API.  
+
+Il existe une multitude de services disponibles sur Internet qui proposent
+des données en tout genre. Cet article liste par exemple [18 API
+amusantes](https://medium.com/@vicbergquist/18-fun-apis-for-your-next-project-8008841c7be9).
+
+Pour préparer ce sujet et l'illustrer nous avons écrit une petite
+application qui exploite les données du service [swapi](https://swapi.co/)
+(l'API Star Wars). Notre application est disponible à l'adresse suivante
+[http://192.168.239.77:8080](http://192.168.239.77:8080). En passant le nom d'un des personnages de
+StarWars dans l'URL on affiche de manière élégante ses caractéristiques (et le
+cas échéant une photo même). Par exemple, [http://192.168.239.77:8080/luke](http://192.168.239.77:8080/luke),
+pour obtenir des informations sur *Luke Skywalker*.
+
+Votre objectif est donc de concevoir une application sur le même principe. Par
+exemple, en passant le nom d'une ville dans l'URL on obtiendrait la température
+qu'il y fait ; le nom d'un pays on obtient le nombre d'habitant ; le numéro
+d'une station Vélo'V on obtient le nombre de vélo restant ; etc...  
+
+> Prenez le temps de sélectionner l'API avec laquelle vous allez jouer.
+
+Le choix de la solution technique que vous allez utiliser est de votre ressort.
+Vous pouvez reprendre par exemple le TP#2 et la librairie *web.py* (simple à
+utiliser mais un peu obsolète) ou la librairie *flask* plus moderne.
+Pour information nous nous avons fait le choix d'utiliser le langage Javascript
+interprété avec le moteur *node.js*, en nous appuyant entre autre sur la
+librairie *express* (nous avons fait ce choix car nous n'avions jamais
+programmé en Javascript... C'était l'occasion de faire connaissance).
  
+**Évaluation** : Ce projet sera évalué. La date limite de rendu n'est pas encore fixée.
+Vous devrez fournir dans Tomuss : 
+
+  - L'adresse IP de votre VM sur laquelle fonctionnera votre service sur le
+    **port 8080**.
+  - Un fichier PDF contenant :
+    1. Vos nom et prénom  (binôme)
+    2. Un titre
+    3. Un *snapshot* de l'écran + l'URL permettant d'obtenir cet écran.
+    3. Un paragraphe expliquant brièvement quels informations présente votre page web.
+    4. Une liste qui énumère les solutions techniques (ex: Javascript/node.js,
+       librairies *express*, *request* et *ejs*).
+    5. Le code source du ou des fichiers que vous avez rédigé (Remarque: utilisez une petite police de
+       caractère pour les codes source).
+
+
+![Screenshot](img/snap-starwars-api.png) [http://192.168.239.77:8080/leia](http://192.168.239.77:8080/leia) 💕
+
+
+
+
+
+
+
