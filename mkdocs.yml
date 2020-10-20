@@ -11,4 +11,12 @@ nav:
         - Système:
                 - UE Embarque : 'UE_Embarque.md'
                 - UE Blockchain : 'UE_Blockchain.md'
+        - Sécurité : 
+                - Nmap : 'UE_Securite/nmap.md'
+                - Metasploit : 'UE_Securite/metasploit.md'
+                - Burpsuite : 'UE_Securite/burpsuite.md'
+                - Challenge Wifi : 'UE_Securite/calimero.md'
+                - Challenge OWASP : 'UE_Securite/owasp.md'
+
+
 

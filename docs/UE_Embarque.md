@@ -3,6 +3,8 @@
 
 > Responsable : Jean-Patrick Gelas < jean-patrick.gelas@univ-lyon1.fr >
 
+> Support de cours : [PDF](http://perso.univ-lyon1.fr/jean-patrick.gelas/doc/sle/embarque-support_de_cours-2020-a-distance.pdf)
+
 - - - 
 
 ## TP1 - Outil de diagnostic mémoire embarqué sur clé USB

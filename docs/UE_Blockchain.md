@@ -1,5 +1,7 @@
 # TP Blockchain Ethereum - Partie I
 
+> - Le support de cours de Léo : [Introduction à la Blockchain](img/blockchain-intro.pdf) (version 1.0 2019)
+> - Le support de cours de Jp : [Introduction à Ethereum](img/ethereum-intro-cm-jpgelas.pdf) (version 1.0 2019)
 
 ## Premières transactions
 
