@@ -22,7 +22,7 @@ Extrait du site web officiel [https://nmap.org/](https://nmap.org/)
 
 Nmap est souvent utilisé pour déterminer les hôtes actifs dans un réseau, les
 ports ouverts sur ces hôtes, les services fonctionnant sur ces ports ouverts et
-l'identification de la version de ce service sur ce port.
+l'identification de la version de ces services sur ces ports.
 
 ### Comment fonctionne Nmap ?
 
@@ -105,7 +105,12 @@ nmap 10.10.10.0/24 --exclude 10.10.10.167
   * N'ignorez pas UDP. Il se peut qu'un service malveillant (backdoor) tourne sur l'hôte que vous êtes en train d'auditer.  
   * Enfin observez avec Wireshark le trafic généré par Nmap et jouez avec les differents *timing templates* (T0 et T5) pour vous convaincre du manque de discrétion flagrant de Nmap.  
 
-
+<!-- 
+	nmap -oN monscan.txt -sS hostaddress 
+	-exclude-ports 22
+	-sU
+	TODO
+-->
 
 **Remarque** : Attention ! Tout acte de scan de réseau non-autorisé est
 assimilé à une attaque et donc réprehensible selon la loi francaise.  Limité

