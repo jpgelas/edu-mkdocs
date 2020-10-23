@@ -19,17 +19,36 @@ Pensez à sélectionner le nom de votre équipe au préalable sinon les points s
 
 Cette [vidéo](https://www.youtube.com/watch?v=mzQBo3a7cHc) résume brièvement (2 minutes) l’usage de l’interface (en cours de développement à l’époque). L’interface permet non seulement de saisir les mots de passe cassé mais également de voir l’avancement des autres équipes en temps réel.
 
-**Indices :** Voici quelques informations qui pourront être utiles pour casser plus efficacement les _psk_ de chacun des AP.
-
-  - **calimero0** : l’administrateur de cet AP n’est pas très au fait des problèmes de sécurité et surtout n’a pas beaucoup d’imagination. Essayez en priorité des mots de passe relativement évidents (Ex : admin, password, motdepasse, 12345678, abcdefgh, le ssid,… )
-  - **calimero1** : l’administrateur a bien changé le mot de passe par défaut. Vous allez devoir utiliser un dictionnaire (Ex : rockyou.txt)
-  - **calimero2** : l’administrateur a bien changé le mot de passe par défaut. Vous allez devoir utiliser un dictionnaire.
-  - **calimero3** : l’administrateur a bien changé le mot de passe par défaut. Vous allez devoir utiliser un dictionnaire.
-  - **calimero4** : on sait que l’administrateur préfixe toujours ses mots de passe par la chaîne de caractères `nautibus` qu’il fait suivre de 4 chiffres (Ex : `nautibus1234`). Après avoir évalué le nombre de combinaisons possibles et la taille du fichier dictionnaire, construisez votre propre dictionnaire (une combinaison par ligne).
-
 **Remarque importante :** Vous n’aurez pas à envoyer de paquets de *DEAUTH* pour provoquer des reconnexions et donc forcer l’apparition des *handshake (eapol)*. Les organisateurs s’en chargent en laissant tourner un script qui provoque des reconnexions d’une station sur chaque AP toutes les minutes environ.
 
-**Rappels :** Quelques rappels sur les outils et la démarche à mettre en œuvre.
+Voici quelques informations qui pourront être utiles pour casser plus efficacement les _psk_ de chacun des AP.
+
+## calimero0
+
+  L’administrateur de cet AP n’est pas très au fait des problèmes de sécurité et surtout n’a pas beaucoup d’imagination. 
+  Essayez en priorité des mots de passe relativement évidents (Ex : admin, password, motdepasse, 12345678, abcdefgh, le ssid,… )
+
+## calimero1
+
+  l’administrateur a bien changé le mot de passe par défaut. Vous allez devoir utiliser un dictionnaire (exemple : rockyou.txt)
+  
+## calimero2
+
+  Télécharger la trace réseau (pcap) suivante [tracereseau.pcap](tracereseau.pcap). 
+  Peut-être y a t-il des échanges de paquets contenant un mot de passe à essayer sur cette AP. 
+ 
+## calimero3 
+
+ L’administrateur n'a peut être pas changé le mot de passe par défaut sachant que l'AP que vous attaquez est un *TODO* (ce ne sera vrai que pour le contexte de ce challenge).
+
+## calimero4
+
+  on sait que l’administrateur préfixe toujours ses mots de passe par la chaîne de caractères `nautibus` et qu’il fait suivre ce mot de 4 chiffres (Ex : `nautibus1234`). 
+  Après avoir évalué le nombre de combinaisons possibles et la taille du fichier dictionnaire, construisez votre propre dictionnaire (une combinaison par ligne).
+
+## Rappels
+
+Quelques rappels sur les outils et la démarche à mettre en œuvre.
 
 Nous vous recommandons d’utiliser la suite *aircrack-ng*.
 

